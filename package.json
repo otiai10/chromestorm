@@ -1,0 +1,28 @@
+{
+  "name": "chromestorm",
+  "version": "0.0.1",
+  "description": "Storage ORM for chrome.storage",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/otiai10/chromestorm.git"
+  },
+  "keywords": [
+    "chrome",
+    "storage",
+    "object-relation-mapper",
+    "orm"
+  ],
+  "author": "otiai10",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/otiai10/chromestorm/issues"
+  },
+  "homepage": "https://github.com/otiai10/chromestorm#readme",
+  "devDependencies": {
+    "jest": "^29.3.1"
+  }
+}
