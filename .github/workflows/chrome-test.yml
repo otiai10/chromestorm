@@ -15,7 +15,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18
-    - uses: browser-actions/setup-chrome@latest
-    - run: chrome --version
+    # - uses: browser-actions/setup-chrome@latest
+    # - run: chrome --version
     - run: npm ci
     - run: node ./e2e/run.js
