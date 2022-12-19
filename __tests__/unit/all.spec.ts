@@ -1,8 +1,15 @@
+/// <reference path="../../node_modules/@types/chrome/index.d.ts" />
+
 import { Model } from "../../src";
 
-// TODO: jest-chrome is not following the latest @types/chrome.
-//       It requires @types/chrome@0.0.193.
-import { chrome } from "jest-chrome";
+function sleep(ms = 0) {
+    return new Promise<void>(resolve => setTimeout(() => resolve(), ms));
+}
+
+
+beforeEach(async () => {
+    chrome.storage.local.clear();
+});
 
 describe("new", () => {
     it("constructs new instance of model without saving", () => {
@@ -41,5 +48,23 @@ describe("create", () => {
         expect(otiai20).toBeInstanceOf(Player);
         expect(otiai20.name).toBe("otiai20");
         expect(otiai20.__id).not.toBe(null);
+    });
+});
+
+describe("list", () => {
+    it("shold list all records as an array of Model instance", async () => {
+        class Player extends Model {
+            static override __area__ = chrome.storage.local;
+            public name: string;
+        }
+        await Player.create({name: "otiai2001"});
+        await sleep(10);
+        await Player.create({name: "otiai2002"});
+        await sleep(10);
+        await Player.create({name: "otiai2003"});
+        await sleep(10);
+        const list = await Player.list();
+        expect(list.length).toBe(3);
+        expect(list[0]).toBeInstanceOf(Player);
     });
 });
