@@ -5,7 +5,6 @@ const path = require("path");
 
 (async () => {
   const ext = path.join(__dirname, "app");
-  console.log(ext);
   const browser = await puppeteer.launch({
     headless: false,
     args: [
@@ -13,17 +12,14 @@ const path = require("path");
       `--load-extension=${ext}`,
     ],
   });
-  console.log(browser);
-  const page = await browser.newPage();
   const background = await browser.waitForTarget(
-    async target => {
-      console.log(target.type());
-      console.log(await target.worker());
-      return target.type() === 'page'
-    }
+    target => target.type() === 'service_worker',
   );
-  // const page = await background.page();
-  console.log(await page.title());
-  await page.close();
+  const worker = await background.worker();
+  const res = await worker.evaluate(`greet_001()`);
+  console.log(res);
+  console.log(await worker.evaluate(`chrome.storage.local.get('foo')`))
+  console.log(await worker.evaluate(`chrome.storage.local.set({foo: {123: {name: 'otiai10'}}})`))
+  console.log(await worker.evaluate(`chrome.storage.local.get('foo')`))
   await browser.close();
 })();

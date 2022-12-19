@@ -1,4 +1,4 @@
-import { Model } from "../src";
+import { Model } from "../../src";
 
 // TODO: jest-chrome is not following the latest @types/chrome.
 //       It requires @types/chrome@0.0.193.

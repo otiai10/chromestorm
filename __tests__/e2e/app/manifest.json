@@ -4,6 +4,6 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["background", "activeTab"],
+  "permissions": ["background", "storage"],
   "manifest_version": 3
 }

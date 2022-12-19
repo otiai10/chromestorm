@@ -4,7 +4,8 @@
   "description": "Storage ORM for chrome.storage",
   "main": "lib/index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --config=./__tests__/unit/jest.config.js",
+    "e2e": "node ./__tests__/e2e/run.js"
   },
   "repository": {
     "type": "git",
