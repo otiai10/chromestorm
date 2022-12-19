@@ -1,9 +1,9 @@
 {
-    "name": "Hello, chromestorm",
-    "version": "1.0",
-    "manifest_version": 3,
-    "background": {
-      "service_worker": "background.js"
-    },
-    "action": {}
-  }
+  "name": "Simple extension",
+  "version": "0.1",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["background", "activeTab"],
+  "manifest_version": 3
+}
