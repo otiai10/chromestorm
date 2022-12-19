@@ -21,7 +21,17 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm test -- --coverage
+  coverage:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+    - run: npm ci
+    - run: npm test -- --coverage
     - uses: codecov/codecov-action@v3
       with:
         file: ./coverage/coverage-final.json
-
