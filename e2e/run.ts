@@ -1,5 +1,5 @@
 import * as puppeteer from "puppeteer";
-const path = require("path");
+import * as path from "path";
 
 // See https://pptr.dev/guides/chrome-extensions/
 

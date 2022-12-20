@@ -2,7 +2,7 @@
   "name": "Simple extension",
   "version": "0.1",
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "dist/background.js"
   },
   "permissions": ["background", "storage"],
   "manifest_version": 3
