@@ -1,6 +1,6 @@
-/// <reference path="../../node_modules/@types/chrome/index.d.ts" />
+/// <reference path="../node_modules/@types/chrome/index.d.ts" />
 
-import { Model } from "../../src";
+import { Model } from "../src";
 
 function sleep(ms = 0) {
     return new Promise<void>(resolve => setTimeout(() => resolve(), ms));

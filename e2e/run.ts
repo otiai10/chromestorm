@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+import * as puppeteer from "puppeteer";
 const path = require("path");
 
 // See https://pptr.dev/guides/chrome-extensions/
@@ -15,7 +15,7 @@ const path = require("path");
   const background = await browser.waitForTarget(
     target => target.type() === 'service_worker',
   );
-  const worker = await background.worker();
+  const worker = (await background.worker())!;
   const res = await worker.evaluate(`greet_001()`);
   console.log(res);
   console.log(await worker.evaluate(`chrome.storage.local.get('foo')`))

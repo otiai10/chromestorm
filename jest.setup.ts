@@ -1,5 +1,5 @@
 
-/// <reference path="../../node_modules/@types/chrome/index.d.ts" />
+/// <reference path="./node_modules/@types/chrome/index.d.ts" />
 
 Object.assign(global, {
     chrome: {
@@ -7,7 +7,6 @@ Object.assign(global, {
             local: {
                 __dict___: {},
                 getBytesInUse(callback) { },
-                getBytesInUse(keys) {},
                 async clear() {
                     this.__dict___ = {};
                     return Promise.resolve();
@@ -21,7 +20,7 @@ Object.assign(global, {
                 async remove(key) {
                     const keys = (key instanceof Array) ? key : [key];
                     keys.map(k => this.__dict___[k] = undefined);
-                    return Promise.resolve();
+                    return;
                 },
                 async get(key) {
                     const result = {};
