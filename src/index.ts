@@ -38,7 +38,6 @@ export class Model {
         const area: chrome.storage.StorageArea = this.__area__;
         const ensemble = await area.get(namespace);
         const dict: { [key: string]: any } = ((ensemble || {})[namespace] || {});
-        // return dict[id];
         return dict[id] ?? null;
     }
 

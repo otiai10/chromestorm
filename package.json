@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "jest --config=./jest.config.ts",
-    "e2e": "npm run build && cp -r ./lib ./e2e/app/lib && npm run build:app && ts-node ./e2e/run.ts",
+    "e2e": "npm run build && npm run build:app && ts-node ./e2e/run.ts",
     "build": "npm run clean && tsc -p ./tsconfig.json",
     "build:app": "parcel build --no-cache --target e2e",
     "clean": "rm -rf ./lib ./e2e/app/lib"
@@ -41,9 +41,6 @@
     "e2e": {
       "source": "./e2e/app/src/background.js",
       "distDir": "./e2e/app/dist",
-      "context": "browser",
-      "outputFormat": "global",
-      "isLibrary": false,
       "optimize": false,
       "sourceMap": false
     }

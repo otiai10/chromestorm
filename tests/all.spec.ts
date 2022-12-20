@@ -42,6 +42,7 @@ describe("create", () => {
     it("is just a shorthand of new().save()", async () => {
         class Player extends Model {
             static override __area__ = chrome.storage.local;
+            static override __namespace__ = "Player";
             public name: string;
         }
         const otiai20 = await Player.create({ name: "otiai20" });

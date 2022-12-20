@@ -1,12 +1,13 @@
-import { Model } from "../lib";
+import { Model } from "../../../lib";
+
+class Player extends Model {
+    greet() {
+        return `Hello, my name is ${this.name}!`;
+    }
+}
+Player.__area__ = chrome.storage.local;
 
 async function greet_001() {
-    class Player extends Model {
-        greet() {
-            return `Hello, my name is ${this.name}!`;
-        }
-    }
-    Player.__area__ = chrome.storage.local;
     await Player.create({ name: "otiai10" });
     const list = await Player.list();
     return {
