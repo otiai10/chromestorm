@@ -28,8 +28,8 @@ export class Model {
         const area: chrome.storage.StorageArea = this.__area__;
         const ensemble = await area.get(namespace);
         const dict: { [key: string]: any } = ((ensemble || {})[namespace] || {});
-        return Object.entries(dict).map(([id, value]) => {
-            return (this as any)["new"](value, id);
+        return Object.entries(dict).map(([id, props]) => {
+            return (this as any)["new"](props, id); // decode to class instances.
         });
     }
 
@@ -56,4 +56,23 @@ export class Model {
         return this;
     }
 
+    // TODO: See https://github.com/otiai10/chomex/blob/main/src/Model/index.ts#L330-L348
+    // public decode<T>(this: T, obj: { [key: string]: any }) {
+    //     Object.keys(obj).map(key => {
+    //         this[key] = obj[key];
+    //     });
+    //     return this;
+    // }
+
+    // TODO: See https://github.com/otiai10/chomex/blob/main/src/Model/index.ts#L350-L373
+    // public encode<T>(this: T): { [key: string]: any } {
+    //     const encoded: { [key: string]: any } = {};
+    //     for (const prop in this) {
+    //         if (!this.hasOwnProperty(prop)) {
+    //             continue;
+    //         }
+    //         encoded[prop] = this[prop];
+    //     }
+    //     return encoded;
+    // }
 }

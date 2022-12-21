@@ -5,16 +5,19 @@ Object.assign(global, {
     chrome: {
         storage: {
             local: {
-                __dict___: {},
-                getBytesInUse(callback) { },
+                __dict__: {
+                },
                 async clear() {
-                    this.__dict___ = {};
+                    delete this.__dict__;
+                    this.__dict__ = new Object();
                     return Promise.resolve();
                 },
-                async set(obj) {
-                    Object.keys(obj).map(key => {
-                        this.__dict___[key] = { ...this.__dict___[key], ...obj[key] };
+                async set(ensemble) {
+                    const encoded = {};
+                    Object.keys(ensemble).map(namespace => {
+                        encoded[namespace] = JSON.stringify(ensemble[namespace]);
                     });
+                    this.__dict__ = { ...this.__dict__, ...encoded };
                     return await Promise.resolve();
                 },
                 async remove(key) {
@@ -22,13 +25,15 @@ Object.assign(global, {
                     keys.map(k => this.__dict___[k] = undefined);
                     return;
                 },
-                async get(key) {
-                    const result = {};
-                    const keys = (key instanceof Array) ? key : [key];
-                    keys.map(k => result[k] = { ...this.__dict___[k] });
+                async get(namespace) {
+                    const nss = (namespace instanceof Array) ? namespace : [namespace];
+                    const result = nss.reduce((ctx, ns) => {
+                        ctx[ns] = JSON.parse(this.__dict__[ns] || `{}`);
+                        return ctx;
+                    }, {});
                     return result;
                 }
-            }
+            },
         }
     }
 });
