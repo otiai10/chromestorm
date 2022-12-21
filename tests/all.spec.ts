@@ -71,4 +71,26 @@ describe("Model", () => {
             expect(list[0].greet()).toBe(`Hello, this is otiai2001!`);
         });
     });
+
+    describe("delete", () => {
+        it("should delete the instance specifically", async () => {
+            class Player extends Model {
+                public name: string;
+                static override __nextID__ = Model.sequentialID;
+            }
+            await Player.create({ name: "otiai3001" });
+            await sleep(10);
+            const p = await Player.create({ name: "otiai3002" });
+            await sleep(10);
+            await Player.create({ name: "otiai3003" });
+            await sleep(10);
+            const q = await Player.find(p.__id!);
+            expect(q?.__id).toEqual(p.__id);
+            const d = await q!.delete();
+            expect(d.__id).toBeUndefined();
+            const list = await Player.list();
+            expect(list.length).toBe(2);
+            expect(list.some(p => p.name == "otiai3002")).toBeFalsy();
+        });
+    });
 });

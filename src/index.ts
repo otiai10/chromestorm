@@ -12,7 +12,7 @@ class IDProvider {
     static timestampID(): string {
         return String(Date.now());
     }
-    static sequentialID(ensemble: { [key:string]: any}): string {
+    static sequentialID(ensemble: { [key:string]: any} = {}): string {
         const last = Object.keys(ensemble).map(id => parseInt(id, 10)).sort((prev, next) => (prev < next) ? -1 : 1).pop();
         return String((last || 0) + 1);
     }
@@ -68,12 +68,14 @@ export class Model extends IDProvider {
         return this;
     }
 
-    // async delete<T>(this: T & Model): Promise<T> {
-    //     const namespace: string = this.constructor["__name__"]();
-    //     const area: chrome.storage.StorageArea = this.constructor["__area__"];
-    //     const ensemble = await area.get(namespace);
-    //     const dict = ((ensemble || {})[namespace] || {});
-    // }
+    async delete<T>(this: T & Model): Promise<T> {
+        const parent = (this.constructor as ModelConstructor<T>);
+        const dict = await parent.__rawdict__();
+        delete dict[this.__id];
+        await parent.__area__.set({ [parent.__name__()]: dict });
+        delete this.__id;
+        return this;
+    }
 
     // TODO: See https://github.com/otiai10/chomex/blob/main/src/Model/index.ts#L330-L348
     // public decode<T>(this: T, obj: { [key: string]: any }) {
