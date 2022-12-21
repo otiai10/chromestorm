@@ -1,21 +1,35 @@
 
-type ModelConstructor<T> = { new(props?: any): T, __name__(): string, __area__: chrome.storage.StorageArea };
+type ModelConstructor<T> = {
+    new(props?: any): T;
+    __name__(): string;
+    __area__: chrome.storage.StorageArea;
+    __rawdict__(): { [key: string]: any };
+    __nextID__(ensemble?: { [key: string]: any }): string;
+};
 
-export class Model {
-
-    static __namespace__?: string;
-    static __name__<T>(this: ModelConstructor<T>): string {
-        return this["__namespace__"] ?? this.name;
-    }
+class IDProvider {
     static __nextID__: (ensemble?: { [key: string]: any }) => string = this.timestampID;
-    static __area__: chrome.storage.StorageArea;
-
     static timestampID(): string {
         return String(Date.now());
     }
     static sequentialID(ensemble: { [key:string]: any}): string {
         const last = Object.keys(ensemble).map(id => parseInt(id, 10)).sort((prev, next) => (prev < next) ? -1 : 1).pop();
         return String((last || 0) + 1);
+    }
+}
+
+export class Model extends IDProvider {
+
+    static __namespace__?: string;
+    static __name__<T>(this: ModelConstructor<T>): string {
+        return this["__namespace__"] ?? this.name;
+    }
+    static __area__: chrome.storage.StorageArea = chrome.storage.local;
+
+    static async __rawdict__<T>(this: ModelConstructor<T>): Promise<{ [key: string]: any }> {
+        const namespace: string = this.__name__();
+        const ensemble = await this.__area__.get(namespace);
+        return ((ensemble || {})[namespace] || {});
     }
 
     static new<T>(this: ModelConstructor<T>, props?: Record<string, any>, __id?: string): T {
@@ -32,37 +46,34 @@ export class Model {
     }
 
     static async list<T>(this: ModelConstructor<T>): Promise<T[]> {
-        const namespace: string = this.__name__();
-        const area: chrome.storage.StorageArea = this.__area__;
-        const ensemble = await area.get(namespace);
-        const dict: { [key: string]: any } = ((ensemble || {})[namespace] || {});
+        const dict = await this.__rawdict__();
         return Object.entries(dict).map(([id, props]) => {
             return (this as any)["new"](props, id); // decode to class instances.
         });
     }
 
     static async find<T>(this: ModelConstructor<T>, id: string): Promise<T | null> {
-        const namespace: string = this.__name__();
-        const area: chrome.storage.StorageArea = this.__area__;
-        const ensemble = await area.get(namespace);
-        const dict: { [key: string]: any } = ((ensemble || {})[namespace] || {});
-        return dict[id] ?? null;
+        const dict = await this.__rawdict__();
+        return dict[id] ? this["new"](dict[id], id) : null;
     }
 
     public __id: string | null;
 
     async save<T>(this: T & Model): Promise<T> {
-        const namespace: string = this.constructor["__name__"]();
-        const area: chrome.storage.StorageArea = this.constructor["__area__"];
-        const ensemble = await area.get(namespace);
-        const dict = ((ensemble || {})[namespace] || {});
-        if (!this.__id) {
-            this.__id = this.constructor["__nextID__"](dict);
-        }
+        const parent = (this.constructor as ModelConstructor<T>);
+        const dict = await parent.__rawdict__();
+        if (!this.__id) this.__id = parent.__nextID__(dict);
         dict[this.__id!] = this;
-        await area.set({ [namespace]: dict });
+        await parent.__area__.set({ [parent.__name__()]: dict });
         return this;
     }
+
+    // async delete<T>(this: T & Model): Promise<T> {
+    //     const namespace: string = this.constructor["__name__"]();
+    //     const area: chrome.storage.StorageArea = this.constructor["__area__"];
+    //     const ensemble = await area.get(namespace);
+    //     const dict = ((ensemble || {})[namespace] || {});
+    // }
 
     // TODO: See https://github.com/otiai10/chomex/blob/main/src/Model/index.ts#L330-L348
     // public decode<T>(this: T, obj: { [key: string]: any }) {

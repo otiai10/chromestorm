@@ -27,7 +27,6 @@ describe("Model", () => {
     describe("save", () => {
         it("saves the instance to your storage area", async () => {
             class Player extends Model {
-                static override __area__ = chrome.storage.local;
                 public name: string;
             }
             const otiai10 = Player.new({ name: "otiai10" });
@@ -42,7 +41,6 @@ describe("Model", () => {
     describe("create", () => {
         it("is just a shorthand of new().save()", async () => {
             class Player extends Model {
-                static override __area__ = chrome.storage.local;
                 static override __namespace__ = "Player";
                 public name: string;
             }
@@ -56,7 +54,6 @@ describe("Model", () => {
     describe("list", () => {
         it("shold list all records as an array of Model instance", async () => {
             class Player extends Model {
-                static override __area__ = chrome.storage.local;
                 public name: string;
                 greet(): string {
                     return `Hello, this is ${this.name}!`;
@@ -71,6 +68,7 @@ describe("Model", () => {
             const list = await Player.list();
             expect(list.length).toBe(3);
             expect(list[0]).toBeInstanceOf(Player);
+            expect(list[0].greet()).toBe(`Hello, this is otiai2001!`);
         });
     });
 });
