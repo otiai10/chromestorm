@@ -7,8 +7,16 @@ export class Model {
     static __name__<T>(this: ModelConstructor<T>): string {
         return this["__namespace__"] ?? this.name;
     }
-    static __nextID__: (dict?: { [key: string]: any }) => string = () => String(Date.now());
+    static __nextID__: (ensemble?: { [key: string]: any }) => string = this.timestampID;
     static __area__: chrome.storage.StorageArea;
+
+    static timestampID(): string {
+        return String(Date.now());
+    }
+    static sequentialID(ensemble: { [key:string]: any}): string {
+        const last = Object.keys(ensemble).map(id => parseInt(id, 10)).sort((prev, next) => (prev < next) ? -1 : 1).pop();
+        return String((last || 0) + 1);
+    }
 
     static new<T>(this: ModelConstructor<T>, props?: Record<string, any>, __id?: string): T {
         const instance: T = new this(props);
