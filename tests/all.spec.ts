@@ -93,4 +93,22 @@ describe("Model", () => {
             expect(list.some(p => p.name == "otiai3002")).toBeFalsy();
         });
     });
+
+    describe("drop", () => {
+        it("should delete all entries under the namespace", async () => {
+            class Player extends Model {}
+            await Player.create();
+            await sleep(10);
+            await Player.create();
+            await sleep(10);
+            await Player.create();
+            await sleep(10);
+            await Player.create();
+            await sleep(10);
+            expect(await Player.list()).toHaveLength(4);
+            await Player.drop();
+            await sleep(10);
+            expect(await Player.list()).toHaveLength(0);
+        });
+    });
 });

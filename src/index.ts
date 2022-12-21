@@ -57,6 +57,11 @@ export class Model extends IDProvider {
         return dict[id] ? this["new"](dict[id], id) : null;
     }
 
+    static async drop<T>(this: ModelConstructor<T>): Promise<void> {
+        await this.__area__.set({ [this.__name__()]: {} });
+        return;
+    }
+
     public __id: string | null;
 
     async save<T>(this: T & Model): Promise<T> {
