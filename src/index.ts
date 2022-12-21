@@ -1,7 +1,7 @@
 
 type ModelConstructor<T> = {
     new(props?: any): T;
-    __name__(): string;
+    __ns__(): string;
     __area__: chrome.storage.StorageArea;
     __rawdict__(): { [key: string]: any };
     __nextID__(ensemble?: { [key: string]: any }): string;
@@ -21,13 +21,13 @@ class IDProvider {
 export class Model extends IDProvider {
 
     static __namespace__?: string;
-    static __name__<T>(this: ModelConstructor<T>): string {
+    static __ns__<T>(this: ModelConstructor<T>): string {
         return this["__namespace__"] ?? this.name;
     }
     static __area__: chrome.storage.StorageArea = chrome.storage.local;
 
     static async __rawdict__<T>(this: ModelConstructor<T>): Promise<{ [key: string]: any }> {
-        const namespace: string = this.__name__();
+        const namespace: string = this.__ns__();
         const ensemble = await this.__area__.get(namespace);
         return ((ensemble || {})[namespace] || {});
     }
@@ -58,7 +58,7 @@ export class Model extends IDProvider {
     }
 
     static async drop<T>(this: ModelConstructor<T>): Promise<void> {
-        await this.__area__.set({ [this.__name__()]: {} });
+        await this.__area__.set({ [this.__ns__()]: {} });
         return;
     }
 
@@ -69,7 +69,7 @@ export class Model extends IDProvider {
         const dict = await parent.__rawdict__();
         if (!this.__id) this.__id = parent.__nextID__(dict);
         dict[this.__id!] = this;
-        await parent.__area__.set({ [parent.__name__()]: dict });
+        await parent.__area__.set({ [parent.__ns__()]: dict });
         return this;
     }
 
@@ -77,7 +77,7 @@ export class Model extends IDProvider {
         const parent = (this.constructor as ModelConstructor<T>);
         const dict = await parent.__rawdict__();
         delete dict[this.__id];
-        await parent.__area__.set({ [parent.__name__()]: dict });
+        await parent.__area__.set({ [parent.__ns__()]: dict });
         delete this.__id;
         return this;
     }

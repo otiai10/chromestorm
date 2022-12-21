@@ -1,6 +1,7 @@
 import { Model } from "../../../lib";
 
 class Player extends Model {
+    static __namespace__ = "Player";
     greet() {
         return `Hello, my name is ${this.name}!`;
     }
@@ -12,7 +13,7 @@ async function greet_001() {
     const list = await Player.list();
     return {
         ok: true,
-        namespace: Player.__name__(),
+        namespace: Player.__ns__(),
         list,
         class: list[0] instanceof Player,
         greet: list[0].greet(),
