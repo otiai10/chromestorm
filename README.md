@@ -11,3 +11,34 @@ ORM-like API provider for `chrome.storage`.
 
 Note: If you want it for `window.localStorage`, check [localstorm](https://github.com/otiai10/localstorm).
 
+# Example Usage
+
+```typescript
+// In your background.{ts|js}
+
+import { Model } from "chromestrom";
+
+// Define your model,
+class Player extends Model {
+    public name: string;
+    public age: number;
+    greet(): string {
+        return `Hello, my name is ${this.name}!`;
+    }
+}
+
+// and use it.
+(async () => {
+    // Save records to chrome.storage.
+    const x = await Player.create({ name: "otiai10", age: 17 });
+    const y = await Player.create({ name: "hiromu", age: 32 });
+
+    // Retrieve records from chrome.storage.
+    console.log(await Player.list()); // 2
+    console.log(await Player.find(x.__id)); // Player {name:"otiai10", age: 17}
+})();
+```
+
+# Issues
+
+- https://github.com/otiai10/chromestorm/issues
