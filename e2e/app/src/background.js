@@ -1,4 +1,5 @@
 import { Model } from "../../../lib";
+import sampledata from "../kcwidget/localstorage.json";
 
 class Player extends Model {
     static __namespace__ = "Player";
@@ -8,7 +9,20 @@ class Player extends Model {
 }
 Player.__area__ = chrome.storage.local;
 
-async function greet_001() {
+/**
+ * Because chomex.Model encodes everything into JSON.string,
+ * when we migrate it into chromestorm, we need to JSON.parse
+ * and storage.{local|sync}.set.
+ */
+self.setup_data = async function() {
+    const obj = Object.keys(sampledata).reduce((ctx, namespace) => {
+        ctx[namespace] = JSON.parse(sampledata[namespace]);
+        return ctx;
+    }, {});
+    await chrome.storage.local.set(obj);
+}
+
+self.example_001 = async function() {
     const x = await Player.create({ name: "otiai10" });
     return {
         ok: true,
@@ -18,5 +32,12 @@ async function greet_001() {
     };
 }
 
-// so that e2e/run.ts can execute script.
-self.greet_001 = greet_001;
+self.example_002 = async function() {
+    class Frame extends Model {
+        static __namespace__ = "Frame";
+    }
+    return {
+        ok: true,
+        list: await Frame.list(),
+    }
+}

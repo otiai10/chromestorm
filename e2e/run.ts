@@ -5,7 +5,18 @@ import * as path from "path";
 
 const data = [
   {
-    run: `greet_001()`
+    label: "Basic usage",
+    run: `example_001()`,
+    assert: (res: any) => {
+      return res;
+    }
+  },
+  {
+    label: "Salvage test for chomex.Model",
+    run: `example_002()`,
+    assert: (res: any) => {
+      return { ok: res.ok };
+    }
   }
 ];
 
@@ -23,16 +34,27 @@ const data = [
   );
   const worker = (await background.worker())!;
 
+  await worker.evaluate("setup_data()");
+
   const errors: any[] = [];
 
   for (let i = 0; i < data.length; i++) {
     const testcase = data[i];
-    const res = (await worker.evaluate(testcase.run)) as any;
-    if (!res.ok) errors.push(res);
-    console.log(res);
+    console.log(`\n\x1b[1m[${i}] ${testcase.label}\x1b[0m`);
+    const response = (await worker.evaluate(testcase.run)) as any;
+    const result = testcase.assert(response);
+    if (!result.ok) {
+      console.log(`\x1b[1m\x1b[31m=> NG\x1b[0m\n`);
+      errors.push({ number: i, label: testcase.label, func: testcase.run, result });
+    } else {
+      console.log(`\x1b[1m\x1b[32m=> OK\x1b[0m`);
+      console.log(result);
+    }
   }
-  // console.log(await worker.evaluate(`chrome.storage.local.get('foo')`))
-  // console.log(await worker.evaluate(`chrome.storage.local.set({foo: {123: {name: 'otiai10'}}})`))
-  // console.log(await worker.evaluate(`chrome.storage.local.get('foo')`))
   await browser.close();
+  if (errors.length > 0) {
+    console.log("ERRORS:")
+    console.error(errors);
+    process.exit(1);
+  }
 })();
