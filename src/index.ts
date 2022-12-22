@@ -34,9 +34,9 @@ export class Model extends IDProvider {
         return ((ensemble || {})[namespace] || {});
     }
 
-    static new<T>(this: ModelConstructor<T>, props?: Record<string, any>, __id?: string): T {
+    static new<T>(this: ModelConstructor<T>, props?: Record<string, any>, _id?: string): T {
         const instance: T = new this(props);
-        instance["__id"] = __id ?? null;
+        instance["_id"] = _id ?? null;
         Object.entries<any>(props || {}).map(([key, value]) => {
             instance[key] = value;
         });
@@ -68,13 +68,13 @@ export class Model extends IDProvider {
         return;
     }
 
-    public __id: string | null;
+    public _id: string | null;
 
     async save<T>(this: T & Model): Promise<T> {
         const parent = (this.constructor as ModelConstructor<T>);
         const dict = await parent.__rawdict__();
-        if (!this.__id) this.__id = parent.__nextID__(dict);
-        dict[this.__id!] = this;
+        if (!this._id) this._id = parent.__nextID__(dict);
+        dict[this._id!] = this;
         await parent.__area__.set({ [parent.__ns__()]: dict });
         return this;
     }
@@ -82,9 +82,9 @@ export class Model extends IDProvider {
     async delete<T>(this: T & Model): Promise<T> {
         const parent = (this.constructor as ModelConstructor<T>);
         const dict = await parent.__rawdict__();
-        delete dict[this.__id];
+        delete dict[this._id];
         await parent.__area__.set({ [parent.__ns__()]: dict });
-        delete this.__id;
+        delete this._id;
         return this;
     }
 

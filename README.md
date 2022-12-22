@@ -35,7 +35,7 @@ class Player extends Model {
 
     // Retrieve records from chrome.storage.
     console.log(await Player.list()); // 2
-    console.log(await Player.find(x.__id)); // Player {name:"otiai10", age: 17}
+    console.log(await Player.find(x._id)); // Player {name:"otiai10", age: 17}
 })();
 ```
 

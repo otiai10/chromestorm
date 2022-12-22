@@ -13,8 +13,8 @@ async function greet_001() {
     return {
         ok: true,
         namespace: Player.__ns__(),
-        id: x.__id,
-        greet: (await Player.find(x.__id)).greet(),
+        id: x._id,
+        greet: (await Player.find(x._id)).greet(),
     };
 }
 

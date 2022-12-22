@@ -16,7 +16,7 @@ describe("Model", () => {
             const otiai10 = Player.new({ name: "otiai10" });
             expect(otiai10).toBeInstanceOf(Player);
             expect(otiai10.name).toBe("otiai10");
-            expect(otiai10.__id).toBe(null);
+            expect(otiai10._id).toBe(null);
         });
     });
 
@@ -28,9 +28,9 @@ describe("Model", () => {
             const otiai10 = Player.new({ name: "otiai10" });
             expect(otiai10).toBeInstanceOf(Player);
             expect(otiai10.name).toBe("otiai10");
-            expect(otiai10.__id).toBe(null);
+            expect(otiai10._id).toBe(null);
             await otiai10.save();
-            expect(otiai10.__id).not.toBe(null);
+            expect(otiai10._id).not.toBe(null);
         });
     });
 
@@ -43,7 +43,7 @@ describe("Model", () => {
             const otiai20 = await Player.create({ name: "otiai20" });
             expect(otiai20).toBeInstanceOf(Player);
             expect(otiai20.name).toBe("otiai20");
-            expect(otiai20.__id).not.toBe(null);
+            expect(otiai20._id).not.toBe(null);
         });
     });
 
@@ -74,10 +74,10 @@ describe("Model", () => {
             await Player.create({ name: "otiai3001" });
             const p = await Player.create({ name: "otiai3002" });
             await Player.create({ name: "otiai3003" });
-            const q = await Player.find(p.__id!);
-            expect(q?.__id).toEqual(p.__id);
+            const q = await Player.find(p._id!);
+            expect(q?._id).toEqual(p._id);
             const d = await q!.delete();
-            expect(d.__id).toBeUndefined();
+            expect(d._id).toBeUndefined();
             const list = await Player.list();
             expect(list.length).toBe(2);
             expect(list.some(p => p.name == "otiai3002")).toBeFalsy();
