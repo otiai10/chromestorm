@@ -9,14 +9,12 @@ class Player extends Model {
 Player.__area__ = chrome.storage.local;
 
 async function greet_001() {
-    await Player.create({ name: "otiai10" });
-    const list = await Player.list();
+    const x = await Player.create({ name: "otiai10" });
     return {
         ok: true,
         namespace: Player.__ns__(),
-        list,
-        class: list[0] instanceof Player,
-        greet: list[0].greet(),
+        id: x.__id,
+        greet: (await Player.find(x.__id)).greet(),
     };
 }
 

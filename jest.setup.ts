@@ -12,13 +12,13 @@ Object.assign(global, {
                     this.__dict__ = new Object();
                     return Promise.resolve();
                 },
-                async set(ensemble) {
+                async set(ensemble): Promise<void> {
                     const encoded = {};
                     Object.keys(ensemble).map(namespace => {
                         encoded[namespace] = JSON.stringify(ensemble[namespace]);
                     });
                     this.__dict__ = { ...this.__dict__, ...encoded };
-                    return await Promise.resolve();
+                    return new Promise(resolve => setTimeout(() => resolve(), 0));
                 },
                 async remove(key) {
                     const keys = (key instanceof Array) ? key : [key];
@@ -31,7 +31,7 @@ Object.assign(global, {
                         ctx[ns] = JSON.parse(this.__dict__[ns] || `{}`);
                         return ctx;
                     }, {});
-                    return result;
+                    return new Promise(resolve => setTimeout(() => resolve(result), 0));
                 }
             },
         }

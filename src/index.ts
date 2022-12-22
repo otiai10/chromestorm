@@ -5,6 +5,8 @@ type ModelConstructor<T> = {
     __area__: chrome.storage.StorageArea;
     __rawdict__(): { [key: string]: any };
     __nextID__(ensemble?: { [key: string]: any }): string;
+
+    list<T>(): Promise<T[]>;
 };
 
 class IDProvider {
@@ -50,6 +52,10 @@ export class Model extends IDProvider {
         return Object.entries(dict).map(([id, props]) => {
             return (this as any)["new"](props, id); // decode to class instances.
         });
+    }
+
+    static async filter<T>(this: ModelConstructor<T>, func: (v: T, i?: number, arr?: T[]) => boolean): Promise<T[]> {
+        return (await this.list()).filter<T>(func as any);
     }
 
     static async find<T>(this: ModelConstructor<T>, id: string): Promise<T | null> {

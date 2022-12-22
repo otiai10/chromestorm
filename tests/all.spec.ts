@@ -2,10 +2,6 @@
 
 import { Model } from "../src";
 
-function sleep(ms = 0) {
-    return new Promise<void>(resolve => setTimeout(() => resolve(), ms));
-}
-
 describe("Model", () => {
 
     beforeEach(async () => {
@@ -60,11 +56,8 @@ describe("Model", () => {
                 }
             }
             await Player.create({ name: "otiai2001" });
-            await sleep(10);
             await Player.create({ name: "otiai2002" });
-            await sleep(10);
             await Player.create({ name: "otiai2003" });
-            await sleep(10);
             const list = await Player.list();
             expect(list.length).toBe(3);
             expect(list[0]).toBeInstanceOf(Player);
@@ -79,11 +72,8 @@ describe("Model", () => {
                 static override __nextID__ = Model.sequentialID;
             }
             await Player.create({ name: "otiai3001" });
-            await sleep(10);
             const p = await Player.create({ name: "otiai3002" });
-            await sleep(10);
             await Player.create({ name: "otiai3003" });
-            await sleep(10);
             const q = await Player.find(p.__id!);
             expect(q?.__id).toEqual(p.__id);
             const d = await q!.delete();
@@ -98,17 +88,26 @@ describe("Model", () => {
         it("should delete all entries under the namespace", async () => {
             class Player extends Model {}
             await Player.create();
-            await sleep(10);
             await Player.create();
-            await sleep(10);
             await Player.create();
-            await sleep(10);
             await Player.create();
-            await sleep(10);
             expect(await Player.list()).toHaveLength(4);
             await Player.drop();
-            await sleep(10);
             expect(await Player.list()).toHaveLength(0);
         });
+    });
+
+    describe("filter", () => {
+        it("should filter the list by given filter-func", async () => {
+            class Player extends Model {
+                public name: string;
+            }
+            await Player.create({ name: "Hiromu Ochiai" });
+            await Player.create({ name: "otiai10" });
+            await Player.create({ name: "EroRetweet Maesto" });
+            expect(await Player.list()).toHaveLength(3);
+            expect(await Player.filter(p => p.name.includes("iai"))).toHaveLength(2);
+            expect(await Player.filter(p => p.name.startsWith("Ero"))).toHaveLength(1);
+        })
     });
 });
